@@ -1,4 +1,5 @@
 %{
+#include "parser.h"
 #include "parser.tab.h"
 int num_lines = 0;
 %}
@@ -7,7 +8,7 @@ int num_lines = 0;
 " "											{}
 "\t"										{}
 \/\/[^\n]*\n        						{printf("\nCOMMENT");}
-\/\*[^*/]\*\/								{printf("\nCOMMENT");}
+\/\*[a-zA-Z0-9_\n' ']*[^*/]\*\/				{printf("\nCOMMENT");}
 "auto"										{printf("\nAUTO"); return(AUTO);}
 "break"										{printf("\nBREAK"); return(BREAK);}
 "case"										{printf("\nCASE"); return(CASE);}
@@ -16,7 +17,7 @@ int num_lines = 0;
 "do"									    {printf("\nDO"); return(DO);}
 "default"									{printf("\nDEFAULT"); return(DEFAULT);}
 "const"										{printf("\nCONST"); return(CONST);}
-"double"									{printf("\nDOUBLE"); return(DOUBLE);}
+"double"									{printf("\nDOUBLE"); yylval.t = 'D'; return(DOUBLE);}
 "else"										{printf("\nELSE"); return(ELSE);}
 "enum"										{printf("\nENUM"); return(ENUM);}
 "extern"									{printf("\nEXTERN"); return(EXTERN);}
@@ -24,7 +25,7 @@ int num_lines = 0;
 "if"										{printf("\nIF"); return(IF);}
 "goto"										{printf("\n\nGOTO"); return(GOTO);}
 "float"										{printf("\nFLOAT"); return(FLOAT);}
-"int"										{printf("\nINT"); return(INT);}
+"int"										{printf("\nINT"); yylval.t = 'I'; return(INT);}
 "long"										{printf("\nLONG"); return(LONG);}
 "register"									{printf("\nREGISTER"); return(REGISTER);}
 "return"									{printf("\nRETURN"); return(RETURN);}
@@ -52,11 +53,11 @@ int num_lines = 0;
 "!="										{printf("\nNOTEQUAL"); return(NOTEQUAL);}
 "&&"										{printf("\nAND"); return(AND);}
 "||"										{printf("\nOR"); return(OR);}
-[0-9]+ 										{printf("\nINTCONST"); yylval = atoi(yytext); return(INTCONST);}
-[0-9]+\.[0-9]+((E|e)[+-]?[0-9]+)?			{printf("\nINTCONST"); yylval = atof(yytext); return(DOUBLECONST);}
-"true"										{printf("\nBOOLEANCONST"); yylval = atoi("1"); return(BOOLEANCONST);}
-"false"										{printf("\nBOOLEANCONST"); yylval = atoi("0"); return(BOOLEANCONST);}
-[a-zA-Z][a-zA-Z0-9_]*						{printf("\nIDENT"); return(IDENT);}
+[0-9]+ 										{printf("\nINTCONST"); return(INTCONST);}
+[0-9]+\.[0-9]+((E|e)[+-]?[0-9]+)?			{printf("\nINTCONST"); return(DOUBLECONST);}
+"true"										{printf("\nBOOLEANCONST"); yylval.num = atoi("1"); return(BOOLEANCONST);}
+"false"										{printf("\nBOOLEANCONST"); yylval.num = atoi("0"); return(BOOLEANCONST);}
+[a-zA-Z][a-zA-Z0-9_]*						{printf("\nIDENT"); yylval.s = strdup(yytext); return(IDENT);}
 \n											{++num_lines;}
 .       									{printf("\nERROR: Illegal token: %s ",yytext); printf("at line %d\n",num_lines);}	
 %%

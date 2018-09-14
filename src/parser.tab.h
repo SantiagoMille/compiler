@@ -53,39 +53,39 @@ extern int yydebug;
     DO = 263,
     DEFAULT = 264,
     CONST = 265,
-    DOUBLE = 266,
-    ELSE = 267,
-    ENUM = 268,
-    EXTERN = 269,
-    FOR = 270,
-    IF = 271,
-    GOTO = 272,
-    FLOAT = 273,
-    INT = 274,
-    INTCONST = 275,
-    IDENT = 276,
-    LONG = 277,
-    REGISTER = 278,
-    RETURN = 279,
-    SIGNED = 280,
-    STATIC = 281,
-    SIZEOF = 282,
-    SHORT = 283,
-    STRUCT = 284,
-    SWITCH = 285,
-    TYPEDEF = 286,
-    UNION = 287,
-    VOID = 288,
-    WHILE = 289,
-    VOLATILE = 290,
-    UNSIGNED = 291,
-    BOOLEAN = 292,
-    REPEAT = 293,
-    PRINT = 294,
-    READINT = 295,
-    READDOUBLE = 296,
-    DOUBLECONST = 297,
-    BOOLEANCONST = 298,
+    ELSE = 266,
+    ENUM = 267,
+    EXTERN = 268,
+    FOR = 269,
+    IF = 270,
+    GOTO = 271,
+    FLOAT = 272,
+    LONG = 273,
+    REGISTER = 274,
+    RETURN = 275,
+    SIGNED = 276,
+    STATIC = 277,
+    SIZEOF = 278,
+    SHORT = 279,
+    STRUCT = 280,
+    SWITCH = 281,
+    TYPEDEF = 282,
+    UNION = 283,
+    VOID = 284,
+    WHILE = 285,
+    VOLATILE = 286,
+    UNSIGNED = 287,
+    BOOLEAN = 288,
+    REPEAT = 289,
+    PRINT = 290,
+    READINT = 291,
+    READDOUBLE = 292,
+    BOOLEANCONST = 293,
+    INTCONST = 294,
+    DOUBLECONST = 295,
+    IDENT = 296,
+    DOUBLE = 297,
+    INT = 298,
     AND = 299,
     OR = 300,
     LESSOREQUAL = 301,
@@ -97,7 +97,22 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 8 "parser.y" /* yacc.c:1909  */
+
+
+    struct example typeexpr;
+    int num;
+	double d;
+	char *s;
+    char t;
+
+#line 113 "parser.tab.h" /* yacc.c:1909  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
