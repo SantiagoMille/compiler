@@ -9,15 +9,15 @@ int yylex();
 
     struct example typeexpr;
     int num;
-	double d;
-	char *s;
+	  double d;
+	  char *s;
     char t;
 }
 
 %token AUTO BREAK CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED BOOLEAN REPEAT PRINT READINT READDOUBLE BOOLEANCONST 
 %token <d> INTCONST DOUBLECONST
 %token <s> IDENT
-%token <t> DOUBLE INT
+%token <t> DOUBLE INT BOOLEAN
 %type <typeexpr> expr
 %type <typeexpr> term
 %type <typeexpr> fact
@@ -32,16 +32,19 @@ int yylex();
 %left '*' '/'
 
 %%
-start : decll expr {printf("El tipo del resultado es: %c\n",$2.type);}
+
+prog : decll expr
       ;
 
 decll : decll decl 
 	| decl {}
 	;
+
 decl : tipo IDENT ';' {place=lookup($2); place->type=$1;}
 
 tipo : DOUBLE {$$ ='D';} 
-     | INT {$$ = 'I';}
+     | INT {$$ = 'I';} 
+     | BOOL {$$='B'}
      ;
 
 expr : expr '+' term {if($1.type == $3.type) $$.type = $1.type;
