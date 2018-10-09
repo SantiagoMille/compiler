@@ -36,23 +36,53 @@ int yylex();
 prog : decll expr
       ;
 
-decll : decll decl 
+decll : decll varDec
+	| decll funcDec 
 	| decl {}
 	;
 
-decl : tipo IDENT ';' {place=lookup($2); place->type=$1;}
+varDec : tipo IDENT ';' {place=lookup($2); place->type=$1;};
 
 tipo : DOUBLE {$$ ='D';} 
      | INT {$$ = 'I';} 
      | BOOL {$$='B'}
      ;
 
+funcDec : tipo IDENT '(' formals ')' instrBlock
+        | VOID IDENT '(' formals ')' instrBlock;
+
+varDecL : varDecL ',' varDec | varDec | ;
+
+formals : varDecL | VOID | ;
+
+instrBlock : instrBlock instr | instr;
+
+instr   : varDecL | instrAssign | instrIf | instrWhile | instrReturn | instrPrint | instrBlock;
+
+instrAssign : IDENT '=' expr ;
+intrIf : IF'('exp')''{' instrBlock'}'|IF'('exp')''{' instrBlock'}'ELSE'{'instrBlock'}';
+instrWhile : WHILE '('exp')''{' instrBlock'}';
+
+instrReturn : RETURN expr;
+instrPrint : PRINT'('exprL')';
+
+exprL : exprL ',' expr | expr | ;
+
 expr : expr '+' term {if($1.type == $3.type) $$.type = $1.type;
 			else yyerror("tipos incompatibles");}
      | term {$$.type = $1.type;}
+     | IDENT
+     | expr '-' term {if($1.type == $3.type) $$.type = $1.type;
+			else yyerror("tipos incompatibles");}
+     | READINT | READDOUBLE | '!'expr | expr '|''|' expr | expr '&''&' expr  | expr '!''=' expr  | expr '=''=' expr 
+     | '>''='expr | expr '>' expr | expr '<''=' expr  | expr '<' expr  | '-' expr | constant
      ;
 
 term : term '*' fact {if($1.type == $3.type) $$.type = $1.type;
+			else yyerror("tipos incompatibles");}
+     | term '/' fact {if($1.type == $3.type) $$.type = $1.type;
+			else yyerror("tipos incompatibles");}
+     | term '%' fact {if($1.type == $3.type) $$.type = $1.type;
 			else yyerror("tipos incompatibles");}
      | fact {$$.type = $1.type;}
      ;
@@ -62,6 +92,13 @@ fact : '(' expr ')' {$$.type = $2.type;}
      | DOUBLECONST {$$.type = 'D';} 
      | IDENT {place=lookup($1); $$.type=place->type;}
      ;
+
+call : IDENT'('actual')';
+
+actual : exprL;
+
+constant: INTCONST | DOUBLECONST | BOOLEANCONST;
+
 %%
 
 static unsigned
