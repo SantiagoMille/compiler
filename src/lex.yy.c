@@ -1133,12 +1133,12 @@ YY_RULE_SETUP
 case 51:
 YY_RULE_SETUP
 #line 58 "scanner.l"
-{printf("\nBOOLEANCONST"); yylval.num = atoi("1"); return(BOOLEANCONST);}
+{printf("\nBOOLEANCONST"); yylval.t = 'BOT'; return(BOOLEANCONST);}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 59 "scanner.l"
-{printf("\nBOOLEANCONST"); yylval.num = atoi("0"); return(BOOLEANCONST);}
+{printf("\nBOOLEANCONST"); yylval.t = 'BOF'; return(BOOLEANCONST);}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
@@ -2163,5 +2163,6 @@ void yyfree (void * ptr )
 #define YYTABLES_NAME "yytables"
 
 #line 63 "scanner.l"
+
 
 
