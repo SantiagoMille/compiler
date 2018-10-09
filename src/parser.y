@@ -16,7 +16,7 @@ int yylex();
 }
 
 %token AUTO BREAK CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE  
-%token <d> INTCONST DOUBLECONST
+%token <d> INTCONST DOUBLECONST BOOLEANCONST
 %token <s> IDENT
 %token <t> DOUBLE INT BOOLEAN
 %type <typeexpr> expr
@@ -39,7 +39,7 @@ prog : decll expr
 
 decll : decll varDec
 	| decll funcDec 
-	| decl {}
+	| varDec {} | funcDec {}
 	;
 
 varDec : tipo IDENT ';' {place=lookup($2); place->type=$1;};
@@ -62,8 +62,8 @@ instrBlock : instrBlock instr | instr;
 instr   : varDecL | instrAssign | instrIf | instrWhile | instrReturn | instrPrint | instrBlock;
 
 instrAssign : IDENT '=' expr ;
-intrIf : IF'('exp')''{' instrBlock'}'|IF'('exp')''{' instrBlock'}'ELSE'{'instrBlock'}';
-instrWhile : WHILE '('exp')''{' instrBlock'}';
+instrIf : IF'('expr')''{' instrBlock'}'|IF'('expr')''{' instrBlock'}'ELSE'{'instrBlock'}';
+instrWhile : WHILE '('expr')''{' instrBlock'}';
 
 instrReturn : RETURN expr;
 instrPrint : PRINT'('exprL')';
