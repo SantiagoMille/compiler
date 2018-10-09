@@ -12,6 +12,7 @@ int yylex();
 	  double d;
 	  char *s;
     char t;
+    int bo;
 }
 
 %token AUTO BREAK CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE  
@@ -45,7 +46,8 @@ varDec : tipo IDENT ';' {place=lookup($2); place->type=$1;};
 
 tipo : DOUBLE {$$ ='D';} 
      | INT {$$ = 'I';} 
-     | BOOLEAN {$$='B'}
+     | BOOL {$$='B'}
+     | BOOLEANCONST {$$ = 'BO'}
      ;
 
 funcDec : tipo IDENT '(' formals ')' instrBlock
