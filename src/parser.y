@@ -9,8 +9,8 @@ int yylex();
 
     struct example typeexpr;
     int num;
-	  double d;
-	  char *s;
+    double d;
+    char *s;
     char t;
     int bo;
 }
