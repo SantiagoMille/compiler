@@ -17,7 +17,7 @@ int num_lines = 1;
 "do"									    {return(DO);}
 "default"									{return(DEFAULT);}
 "const"										{return(CONST);}
-"double"									{yylval.t = 'D'; return(DOUBLE);}
+"double"									{return(DOUBLE);}
 "else"										{return(ELSE);}
 "enum"										{return(ENUM);}
 "extern"									{return(EXTERN);}
@@ -25,7 +25,7 @@ int num_lines = 1;
 "if"										{return(IF);}
 "goto"										{return(GOTO);}
 "float"										{return(FLOAT);}
-"int"										{yylval.t = 'I'; return(INT);}
+"int"										{return(INT);}
 "long"										{return(LONG);}
 "register"									{return(REGISTER);}
 "return"									{return(RETURN);}
@@ -53,11 +53,11 @@ int num_lines = 1;
 "!="										{return(NOTEQUAL);}
 "&&"										{return(AND);}
 "||"										{return(OR);}
-[0-9]+ 										{yylval.num = atoi(yytext); return(INTCONST);}
+[0-9]+ 										{return(INTCONST);}
 [0-9]+\.[0-9]+((E|e)[+-]?[0-9]+)?			{return(DOUBLECONST);}
-"true"										{yylval.t = 'T'; return(BOOLEANCONST);}
-"false"										{yylval.t = 'F'; return(BOOLEANCONST);}
-[a-zA-Z][a-zA-Z0-9_]*						{yylval.s = strdup(yytext); return(IDENT);}
+"true"										{return(BOOLEANCONST);}
+"false"										{return(BOOLEANCONST);}
+[a-zA-Z][a-zA-Z0-9_]*						{return(IDENT);}
 \n											{++num_lines;}
 <<EOF>>										{return 0;}
 .       									{printf("\nERROR: Illegal token: %s ",yytext); printf("at line %d\n",num_lines);}	

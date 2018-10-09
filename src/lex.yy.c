@@ -943,7 +943,7 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 20 "scanner.l"
-{yylval.t = 'D'; return(DOUBLE);}
+{return(DOUBLE);}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
@@ -983,7 +983,7 @@ YY_RULE_SETUP
 case 21:
 YY_RULE_SETUP
 #line 28 "scanner.l"
-{yylval.t = 'I'; return(INT);}
+{return(INT);}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
@@ -1123,7 +1123,7 @@ YY_RULE_SETUP
 case 49:
 YY_RULE_SETUP
 #line 56 "scanner.l"
-{yylval.num = atoi(yytext); return(INTCONST);}
+{return(INTCONST);}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
@@ -1133,17 +1133,17 @@ YY_RULE_SETUP
 case 51:
 YY_RULE_SETUP
 #line 58 "scanner.l"
-{yylval.t = 'T'; return(BOOLEANCONST);}
+{return(BOOLEANCONST);}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 59 "scanner.l"
-{yylval.t = 'F'; return(BOOLEANCONST);}
+{return(BOOLEANCONST);}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 60 "scanner.l"
-{yylval.s = strdup(yytext); return(IDENT);}
+{return(IDENT);}
 	YY_BREAK
 case 54:
 /* rule 54 can match eol */

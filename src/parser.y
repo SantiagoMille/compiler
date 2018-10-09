@@ -1,25 +1,17 @@
 %{
-#include <stdio.h>
 #include "parser.h"
+#include <stdio.h>
 int yyerror(char *);
 int yylex();
 %}
 
 %union{
-  struct {
-    int num;
-    double d;
-    char *s;
-    char t;
-  }
+  struct typeexpr;
+  char t; 
 }
 
-%token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE  
-%token <num> INTCONST 
-%token <d> DOUBLECONST 
-%token <s> IDENT
-%token <t> DOUBLE INT BOOLEAN BOOLEANCONST
-%type <typeexpr> exp
+%token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE INTCONST DOUBLECONST IDENT DOUBLE INT BOOLEAN BOOLEANCONST
+%type <typeexpr> expr
 %type <typeexpr> term
 %type <typeexpr> fact
 %type <typeexpr> decll
@@ -42,11 +34,11 @@ decll : decll varDec
 	| varDec {} | funcDec {}
 	;
 
-varDec : tipo IDENT ';' {place=lookup($2); place->type=$1;};
+varDec : tipo IDENT ';' {};
 
-tipo : DOUBLE {$$ ='D';} 
-     | INT {$$ = 'I';} 
-     | BOOLEAN {$$='B';}
+tipo : DOUBLE {} 
+     | INT {} 
+     | BOOLEAN {}
      ;
 
 funcDec : tipo IDENT '(' formals ')' instrBlock
@@ -69,29 +61,24 @@ instrPrint : PRINT'('exprL')';
 
 exprL : exprL ',' expr | expr | ;
 
-expr : expr '+' term {if($1.type == $3.type) $$.type = $1.type;
-			else yyerror("tipos incompatibles");}
-     | term {$$.type = $1.type;}
+expr : expr '+' term {}
+     | term {}
      | IDENT
-     | expr '-' term {if($1.type == $3.type) $$.type = $1.type;
-			else yyerror("tipos incompatibles");}
+     | expr '-' term {}
      | READINT | READDOUBLE | '!'expr | expr '|''|' expr | expr '&''&' expr  | expr '!''=' expr  | expr '=''=' expr 
      | '>''='expr | expr '>' expr | expr '<''=' expr  | expr '<' expr  | '-' expr | constant | call
      ;
 
-term : term '*' fact {if($1.type == $3.type) $$.type = $1.type;
-			else yyerror("tipos incompatibles");}
-     | term '/' fact {if($1.type == $3.type) $$.type = $1.type;
-			else yyerror("tipos incompatibles");}
-     | term '%' fact {if($1.type == $3.type) $$.type = $1.type;
-			else yyerror("tipos incompatibles");}
-     | fact {$$.type = $1.type;}
+term : term '*' fact {}
+     | term '/' fact {}
+     | term '%' fact {}
+     | fact {}
      ;
 
-fact : '(' expr ')' {$$.type = $2.type;}
-     | INTCONST {$$.type = 'I';}
-     | DOUBLECONST {$$.type = 'D';} 
-     | IDENT {place=lookup($1); $$.type=place->type;}
+fact : '(' expr ')' {}
+     | INTCONST {}
+     | DOUBLECONST {} 
+     | IDENT {}
      ;
 
 call : IDENT'('actual')';
@@ -143,7 +130,7 @@ int main(int argc, char **argv)
 {
   if ((argc > 1) && (freopen(argv[1], "r", stdin) == NULL))
   {
-    cerr << argv[0] << ": File " << argv[1] << " cannot be opened.\n";
+    printf("Cannot open file %s", argv[1]);
     exit( 1 );
   }
 	yyparse();

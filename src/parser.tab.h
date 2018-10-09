@@ -81,11 +81,11 @@ extern int yydebug;
     READDOUBLE = 291,
     INTCONST = 292,
     DOUBLECONST = 293,
-    BOOLEANCONST = 294,
-    IDENT = 295,
-    DOUBLE = 296,
-    INT = 297,
-    BOOLEAN = 298,
+    IDENT = 294,
+    DOUBLE = 295,
+    INT = 296,
+    BOOLEAN = 297,
+    BOOLEANCONST = 298,
     AND = 299,
     OR = 300,
     LESSOREQUAL = 301,
@@ -102,15 +102,10 @@ union YYSTYPE
 {
 #line 8 "parser.y" /* yacc.c:1909  */
 
+  struct typeexpr;
+  char t; 
 
-    struct example typeexpr;
-    int num;
-	  double d;
-	  char *s;
-    char t;
-    int bo;
-
-#line 114 "parser.tab.h" /* yacc.c:1909  */
+#line 109 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
