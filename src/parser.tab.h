@@ -75,17 +75,17 @@ extern int yydebug;
     WHILE = 285,
     VOLATILE = 286,
     UNSIGNED = 287,
-    BOOLEAN = 288,
-    REPEAT = 289,
-    PRINT = 290,
-    READINT = 291,
-    READDOUBLE = 292,
-    BOOLEANCONST = 293,
-    INTCONST = 294,
-    DOUBLECONST = 295,
-    IDENT = 296,
-    DOUBLE = 297,
-    INT = 298,
+    REPEAT = 288,
+    PRINT = 289,
+    READINT = 290,
+    READDOUBLE = 291,
+    INTCONST = 292,
+    DOUBLECONST = 293,
+    BOOLEANCONST = 294,
+    IDENT = 295,
+    DOUBLE = 296,
+    INT = 297,
+    BOOLEAN = 298,
     AND = 299,
     OR = 300,
     LESSOREQUAL = 301,
@@ -105,11 +105,12 @@ union YYSTYPE
 
     struct example typeexpr;
     int num;
-	double d;
-	char *s;
+	  double d;
+	  char *s;
     char t;
+    int bo;
 
-#line 113 "parser.tab.h" /* yacc.c:1909  */
+#line 114 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

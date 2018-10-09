@@ -46,8 +46,7 @@ varDec : tipo IDENT ';' {place=lookup($2); place->type=$1;};
 
 tipo : DOUBLE {$$ ='D';} 
      | INT {$$ = 'I';} 
-     | BOOL {$$='B'}
-     | BOOLEANCONST {$$ = 'BO'}
+     | BOOLEAN {$$='B';}
      ;
 
 funcDec : tipo IDENT '(' formals ')' instrBlock
@@ -55,7 +54,7 @@ funcDec : tipo IDENT '(' formals ')' instrBlock
 
 varDecL : varDecL ',' varDec | varDec | ;
 
-formals : varDecL | VOID | ;
+formals : varDecL | VOID;
 
 instrBlock : instrBlock instr | instr;
 
@@ -77,7 +76,7 @@ expr : expr '+' term {if($1.type == $3.type) $$.type = $1.type;
      | expr '-' term {if($1.type == $3.type) $$.type = $1.type;
 			else yyerror("tipos incompatibles");}
      | READINT | READDOUBLE | '!'expr | expr '|''|' expr | expr '&''&' expr  | expr '!''=' expr  | expr '=''=' expr 
-     | '>''='expr | expr '>' expr | expr '<''=' expr  | expr '<' expr  | '-' expr | constant
+     | '>''='expr | expr '>' expr | expr '<''=' expr  | expr '<' expr  | '-' expr | constant | call
      ;
 
 term : term '*' fact {if($1.type == $3.type) $$.type = $1.type;
@@ -148,7 +147,7 @@ int main(int argc, char **argv)
 
 int yyerror(char *s)
 {
-	fprintf(stderr,"error: %s\n", s);
+	fprintf(stderr,"errorrrr: %s\n", s);
 	exit(0);
 }
 

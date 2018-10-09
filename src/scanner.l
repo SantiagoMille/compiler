@@ -55,8 +55,8 @@ int num_lines = 0;
 "||"										{return(OR);}
 [0-9]+ 										{return(INTCONST);}
 [0-9]+\.[0-9]+((E|e)[+-]?[0-9]+)?			{return(DOUBLECONST);}
-"true"										{yylval.t = 'BOT'; return(BOOLEANCONST);}
-"false"										{yylval.t = 'BOF'; return(BOOLEANCONST);}
+"true"										{yylval.t = 'T'; return(BOOLEANCONST);}
+"false"										{yylval.t = 'F'; return(BOOLEANCONST);}
 [a-zA-Z][a-zA-Z0-9_]*						{yylval.s = strdup(yytext); return(IDENT);}
 \n											{++num_lines;}
 .       									{printf("\nERROR: Illegal token: %s ",yytext); printf("at line %d\n",num_lines);}	
