@@ -1,7 +1,7 @@
 %{
 #include "parser.h"
 #include "parser.tab.h"
-int num_lines = 0;
+int num_lines = 1;
 %}
 
 %%
@@ -53,11 +53,12 @@ int num_lines = 0;
 "!="										{return(NOTEQUAL);}
 "&&"										{return(AND);}
 "||"										{return(OR);}
-[0-9]+ 										{return(INTCONST);}
+[0-9]+ 										{yylval = atoi(yytext); return(INTCONST);}
 [0-9]+\.[0-9]+((E|e)[+-]?[0-9]+)?			{return(DOUBLECONST);}
 "true"										{yylval.t = 'T'; return(BOOLEANCONST);}
 "false"										{yylval.t = 'F'; return(BOOLEANCONST);}
 [a-zA-Z][a-zA-Z0-9_]*						{yylval.s = strdup(yytext); return(IDENT);}
 \n											{++num_lines;}
+<<EOF>>										{return 0;}
 .       									{printf("\nERROR: Illegal token: %s ",yytext); printf("at line %d\n",num_lines);}	
 %%

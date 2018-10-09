@@ -6,20 +6,21 @@ int yylex();
 %}
 
 %union{
-
-    struct example typeexpr;
+  struct {
     int num;
+    int i;
 	  double d;
 	  char *s;
     char t;
-    int bo;
+  }
 }
 
-%token AUTO BREAK CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE  
-%token <d> INTCONST DOUBLECONST BOOLEANCONST
+%token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE  
+%token <ids> INTCONST 
+%token <d> DOUBLECONST 
 %token <s> IDENT
-%token <t> DOUBLE INT BOOLEAN
-%type <typeexpr> expr
+%token <t> DOUBLE INT BOOLEAN BOOLEANCONST
+%type <typeexpr> exp
 %type <typeexpr> term
 %type <typeexpr> fact
 %type <typeexpr> decll
@@ -52,7 +53,7 @@ tipo : DOUBLE {$$ ='D';}
 funcDec : tipo IDENT '(' formals ')' instrBlock
         | VOID IDENT '(' formals ')' instrBlock;
 
-varDecL : varDecL ',' varDec | varDec | ;
+varDecL : varDecL ',' varDec | varDec ;
 
 formals : varDecL | VOID;
 
@@ -141,6 +142,11 @@ lookup(char* sym)
 
 int main(int argc, char **argv)
 {
+  if ((argc > 1) && (freopen(argv[1], "r", stdin) == NULL))
+  {
+    cerr << argv[0] << ": File " << argv[1] << " cannot be opened.\n";
+    exit( 1 );
+  }
 	yyparse();
 	printf("Expresion aceptada \n");
 }

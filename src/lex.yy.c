@@ -600,7 +600,7 @@ char *yytext;
 #line 2 "scanner.l"
 #include "parser.h"
 #include "parser.tab.h"
-int num_lines = 0;
+int num_lines = 1;
 #line 605 "lex.yy.c"
 
 #define INITIAL 0
@@ -1123,7 +1123,7 @@ YY_RULE_SETUP
 case 49:
 YY_RULE_SETUP
 #line 56 "scanner.l"
-{return(INTCONST);}
+{yylval = atoi(yytext); return(INTCONST);}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
@@ -1151,19 +1151,21 @@ YY_RULE_SETUP
 #line 61 "scanner.l"
 {++num_lines;}
 	YY_BREAK
+case YY_STATE_EOF(INITIAL):
+#line 62 "scanner.l"
+{return 0;}
+	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 62 "scanner.l"
+#line 63 "scanner.l"
 {printf("\nERROR: Illegal token: %s ",yytext); printf("at line %d\n",num_lines);}	
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 63 "scanner.l"
+#line 64 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1165 "lex.yy.c"
-case YY_STATE_EOF(INITIAL):
-	yyterminate();
+#line 1169 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2162,7 +2164,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 63 "scanner.l"
+#line 64 "scanner.l"
 
 
 
