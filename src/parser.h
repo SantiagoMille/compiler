@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+int i; 
 struct  example  {
 	char type;
 	double val;
-	int bo;
+	int bo,i;
 };
 
 struct symbol {
