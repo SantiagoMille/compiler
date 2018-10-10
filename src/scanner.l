@@ -8,7 +8,7 @@ int num_lines = 1;
 " "											{}
 "\t"										{}
 "//".*       								        {printf("Comment corto\n");}
-\/\*[a-zA-Z0-9_\n' ']*[^*/]\*\/				                        {}
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       	{}		                        {}
 "auto"										{return(AUTO);}
 "break"										{return(BREAK);}
 "case"										{return(CASE);}
