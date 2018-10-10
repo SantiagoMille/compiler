@@ -10,7 +10,8 @@ int main () {
 	int num;
 	num = 5;
 	/* Multiple comment 
-	   test */
+	test 
+	*/
 
 	bool asdf;
 	hello = testFunction();
@@ -27,8 +28,19 @@ int testFunction (int n){
 	double t;
 	t = 5.6;
 	double r;
-	r = 7.8 / t; 
-	int k ;
+	
+	while(t==3){
+		int x;
+		x=3;	
+	}
+	
+	if(t){
+		int x;
+		x=3;	
+	}
+
+	r = 7.8 * t; 
+	int k;
 	k = 50 + n;
 	// More single line comments 
 	return k;
@@ -40,7 +52,7 @@ void testFunction2(int a, int b, bool flag){
 	print(x);
 	print(y);
 	print(flag);
-
-	return;
+	
+	return 0;
 
 }

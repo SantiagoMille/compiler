@@ -13,8 +13,6 @@ int yylex();
 
 %token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE INTCONST DOUBLECONST IDENT DOUBLE INT BOOLEAN BOOLEANCONST 
 %type <typeexpr> expr
-%type <typeexpr> term
-%type <typeexpr> fact
 %type <typeexpr> decll
 %type <t> tipo
 
@@ -40,7 +38,7 @@ varDec : var ';' ;
 
 var    : tipo IDENT ;
 
-tipo : DOUBLE 
+tipo : DOUBLE
      | INT 
      | BOOLEAN
      ;
@@ -61,9 +59,11 @@ instr   : varDecL | instrAssign | instrIf | instrWhile | instrRepeat | instrRetu
 
 instrAssign : IDENT '=' expr ';'|IDENT '=' exprL ';' |IDENT '=' actual |IDENT '=' call ';' ;
 
-instrIf : IF'('expr')''{' instrBlock'}'|IF'('expr')''{' instrBlock'}'ELSE'{'instrBlock'}';
+instrIf : IF '(' exprL ')' '{' instrBlock '}'  
+        |IF'('exprL ')' '{' instrBlock '}' ELSE '{' instrBlock '}';
 
-instrWhile : WHILE '('expr')''{' instrBlock'}' {printf("while");};
+instrWhile : WHILE '(' exprL ')' '{' instrBlock'}' 
+	   | ;
 
 instrRepeat : REPEAT '{' instrBlock'}' '('expr')';
 
@@ -81,7 +81,6 @@ exprL : exprL ',' expr
       | expr ;
 
 expr : expr '+' expr
-     | expr
      | IDENT
      | expr '-' expr
      | READINT'('')'
@@ -90,7 +89,7 @@ expr : expr '+' expr
      | expr OR expr 
      | expr AND expr  
      | expr NOTEQUAL expr  
-     | expr EQUALEQUAL expr 
+     | expr EQUALEQUAL expr
      | expr GREATEROREQUAL expr 
      | expr '>' expr 
      | expr LESSOREQUAL expr  
