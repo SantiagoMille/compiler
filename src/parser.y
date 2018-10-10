@@ -27,16 +27,22 @@ int yylex();
 
 %%
 
-prog : decll expr {printf("\nprog");};
+prog : decll {printf("\nprog");};
 
-decll : decll ',' varDec {printf("\ndecll1");}
+/*decll : decll ',' varDec {printf("\ndecll1");}
 	| decll ',' funcDec {printf("\ndecll2");}
+        | decll BR varDec {printf("\ndecll1");}
+	| decll BR funcDec {printf("\ndecll2");}
 	| varDec | funcDec {printf("\ndecll3");}
 	;
+*/
 
-varDec : tipo IDENT ';' {printf("\nvarDec1");}
-       | tipo IDENT ';' BR {printf("\nvarDec1");}
-       | tipo IDENT {printf("\nvarDec1");} ;
+decll   : decll varDec | varDec | decll funcDec | funcDec;
+
+
+varDec : var ';' {printf("\nvarDec1");};
+
+var    : tipo IDENT;
 
 tipo : DOUBLE 
      | INT 
@@ -46,46 +52,55 @@ tipo : DOUBLE
 funcDec : tipo IDENT '(' formals ')' '{'instrBlock'}' {printf("\nfuncDec1");}
         | VOID IDENT '(' formals ')' '{'instrBlock'}' {printf("\nfuncDec2");};
 
-varDecL : varDecL ',' varDec | varDec ;
+varDecL : var ',' var | var ;
 
-formals : varDecL | VOID;
+varDecLL : varDecL ';';
+
+formals : varDecL | VOID | ;
 
 instrBlock : instrBlock instr | instr;
 
-instr   : varDecL | instrAssign | instrIf | instrWhile | instrReturn | instrPrint | instrBlock;
+instr   : varDecL | instrAssign | instrIf | instrWhile | instrRepeat | instrReturn | instrPrint | instrBlock;
 
-instrAssign : IDENT '=' expr ;
+instrAssign : IDENT '=' expr ';';
 instrIf : IF'('expr')''{' instrBlock'}'|IF'('expr')''{' instrBlock'}'ELSE'{'instrBlock'}';
 instrWhile : WHILE '('expr')''{' instrBlock'}';
 
-instrReturn : RETURN expr;
-instrPrint : PRINT'('exprL')';
+instrRepeat : REPEAT '{' instrBlock'}' '('expr')';
 
-exprL : expr ',' exprL | expr | VOID;
+instrReturn : RETURN expr ';';
+instrPrint : PRINT'(' varDecL ')'';';
 
-expr : expr '+' term {}
-     | term {}
+exprL : exprL ',' expr | expr | ;
+
+expr : expr '+' expr
+     | expr
      | IDENT
-     | expr '-' term {}
-     | READINT | READDOUBLE | '!'expr | expr '|''|' expr | expr '&''&' expr  | expr '!''=' expr  | expr '=''=' expr 
-     | '>''='expr | expr '>' expr | expr '<''=' expr  | expr '<' expr  | '-' expr | constant | call
-     ;
-
-term : term '*' fact {}
-     | term '/' fact {}
-     | term '%' fact {}
-     | fact {}
-     ;
-
-fact : '(' expr ')' {}
-     | INTCONST {}
-     | DOUBLECONST {} 
-     | IDENT {}
+     | expr '-' expr
+     | READINT'('')'
+     | READDOUBLE'('')' 
+     | '!'expr 
+     | expr OR expr 
+     | expr AND expr  
+     | expr NOTEQUAL expr  
+     | expr EQUALEQUAL expr 
+     | expr GREATEROREQUAL expr 
+     | expr '>' expr 
+     | expr LESSOREQUAL expr  
+     | expr '<' expr  
+     | '-' expr 
+     | constant 
+     | call 
+     | IDENT 
+     | '(' expr ')' 
+     | expr '*' expr 
+     | expr '/' expr 
+     | expr '%' expr 
      ;
 
 call : IDENT'('actual')';
 
-actual : exprL;
+actual : exprL| ;
 
 constant: INTCONST | DOUBLECONST | BOOLEANCONST;
 
