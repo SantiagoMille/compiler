@@ -1440,14 +1440,8 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 60:
-#line 92 "parser.y" /* yacc.c:1646  */
-    {printf("vale vergaaa");}
-#line 1447 "parser.tab.c" /* yacc.c:1646  */
-    break;
-
-
-#line 1451 "parser.tab.c" /* yacc.c:1646  */
+      
+#line 1445 "parser.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
