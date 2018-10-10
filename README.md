@@ -1,22 +1,24 @@
-# compiler
+# Compiler
 
-##Projecto para la clase de Lenguajes y Traductores
+## Programming Languages and Translators 
 
-##Autores: 	Luis Santiago Mille fregoso	A011690
+##Autores: 	Luis Santiago Mille fregoso	A01169067
 ##		Jose Castilla 			A01169058
 ## 		Iván Gilberto Martin Enciso	A01169099
 
-Agosto 2018
+August 2018
 
 -----------------------------------------------------------------------------------------------
-Instrucciones de uso:
+Compiling and running Instructions
 
-1. Para compilar tan solo es necesario correr el ejecutable make de la siguiente forma: ./make.
+1. In order to compile the project it is only necessary to run the already made executable called "make" as such: ./make
+This will execute the necessary commands to compile both the scanner (flex) and the parser(bison). 
 
-1.1. Debemos asegurarnos que este make este en la misma carpeta que los archivos flex y bison .y & .l
+NOTE: It is necessary that the 'make.c' file and the executable 'make' are in the same folder as the flex and bison files (.l and .y files) 
 
-2. Para probar el programa debe de correrse de la siguiente forma: ./compiler < archivo.txt
+2. In order to run and test the program one must open a terminal in the same folder where the flex, the bison, and the make file are. Then in the terminal one should execute the compiler as: 
+./compiler < file.txt
 
-2.1. archivo.txt seria el programa de entrada (cambiar archivo.txt por el nombre y extension del archivo de entrada)
+2.1. file.txt is the input file (change file.txt to the name and extension of the desired input file)
 
 ------------------------------------------------------------------------------------------------

@@ -1,4 +1,46 @@
+// This is a text input file for the compiler
 int a;
 int b;
+double c;
+bool flag;
 
-int c;
+int main () {
+	
+	int hello;
+	int num;
+	num = 5;
+	/* Multiple comment 
+	   test */
+
+	bool asdf;
+	hello = testFunction();
+	print (hello); 
+	int y; 
+	int x;
+	testFunction2(x,y,asdf);
+	return 0; 
+
+}
+
+int testFunction (int n){
+	
+	double t;
+	t = 5.6;
+	double r;
+	r = 7.8 / t; 
+	int k ;
+	k = 50 + n;
+	// More single line comments 
+	return k;
+
+}
+
+void testFunction2(int a, int b, bool flag){
+	
+	print(x);
+	print(y);
+	print(flag);
+
+	return;
+
+}
