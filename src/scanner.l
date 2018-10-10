@@ -14,14 +14,14 @@ int num_lines = 1;
 "case"										{return(CASE);}
 "char"										{return(CHAR);}
 "continue"									{return(CONTINUE);}
-"do"									    {return(DO);}
+"do"									        {return(DO);}
 "default"									{return(DEFAULT);}
 "const"										{return(CONST);}
 "double"									{return(DOUBLE);}
 "else"										{return(ELSE);}
 "enum"										{return(ENUM);}
 "extern"									{return(EXTERN);}
-"for"								    	{return(FOR);}
+"for"								    	        {return(FOR);}
 "if"										{return(IF);}
 "goto"										{return(GOTO);}
 "float"										{return(FLOAT);}
@@ -45,8 +45,8 @@ int num_lines = 1;
 "repeat"									{return(REPEAT);}
 "print"										{return(PRINT);}
 "readint"									{return(READINT);}
-"readdouble"								{return(READDOUBLE);}
-[+*()-/%<>=!;,{}]							{return(yytext[0]);}
+"readdouble"								        {return(READDOUBLE);}
+[+*()-/%<>=!;,{}]							        {return(yytext[0]);}
 "<="									  	{return(LESSOREQUAL);}
 ">="										{return(GREATEROREQUAL);}
 "=="										{return(EQUALEQUAL);}
@@ -58,7 +58,7 @@ int num_lines = 1;
 "true"										{return(BOOLEANCONST);}
 "false"										{return(BOOLEANCONST);}
 [a-zA-Z][a-zA-Z0-9_]*						{return(IDENT);}
-\n											{++num_lines;}
+\n											{++num_lines; return(BR);}
 <<EOF>>										{return 0;}
 .       									{printf("\nERROR: Illegal token: %s ",yytext); printf("at line %d\n",num_lines);}	
 %%

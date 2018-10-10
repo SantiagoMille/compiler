@@ -1,6 +1,7 @@
 %{
 #include "parser.h"
 #include <stdio.h>
+extern int num_lines;
 int yyerror(char *);
 int yylex();
 %}
@@ -10,7 +11,7 @@ int yylex();
   char t; 
 }
 
-%token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE INTCONST DOUBLECONST IDENT DOUBLE INT BOOLEAN BOOLEANCONST
+%token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE INTCONST DOUBLECONST IDENT DOUBLE INT BOOLEAN BOOLEANCONST BR
 %type <typeexpr> expr
 %type <typeexpr> term
 %type <typeexpr> fact
@@ -26,23 +27,24 @@ int yylex();
 
 %%
 
-prog : decll expr
-      ;
+prog : decll expr {printf("\nprog");};
 
-decll : decll varDec
-	| decll funcDec 
-	| varDec {} | funcDec {}
+decll : decll ',' varDec {printf("\ndecll1");}
+	| decll ',' funcDec {printf("\ndecll2");}
+	| varDec | funcDec {printf("\ndecll3");}
 	;
 
-varDec : tipo IDENT ';' {};
+varDec : tipo IDENT ';' {printf("\nvarDec1");}
+       | tipo IDENT ';' BR {printf("\nvarDec1");}
+       | tipo IDENT {printf("\nvarDec1");} ;
 
-tipo : DOUBLE {} 
-     | INT {} 
-     | BOOLEAN {}
+tipo : DOUBLE 
+     | INT 
+     | BOOLEAN 
      ;
 
-funcDec : tipo IDENT '(' formals ')' instrBlock
-        | VOID IDENT '(' formals ')' instrBlock;
+funcDec : tipo IDENT '(' formals ')' '{'instrBlock'}' {printf("\nfuncDec1");}
+        | VOID IDENT '(' formals ')' '{'instrBlock'}' {printf("\nfuncDec2");};
 
 varDecL : varDecL ',' varDec | varDec ;
 
@@ -59,7 +61,7 @@ instrWhile : WHILE '('expr')''{' instrBlock'}';
 instrReturn : RETURN expr;
 instrPrint : PRINT'('exprL')';
 
-exprL : exprL ',' expr | expr | ;
+exprL : expr ',' exprL | expr | VOID;
 
 expr : expr '+' term {}
      | term {}
@@ -139,7 +141,7 @@ int main(int argc, char **argv)
 
 int yyerror(char *s)
 {
-	fprintf(stderr,"errorrrr: %s\n", s);
+	fprintf(stderr,"error: %s %d\n", s, num_lines);
 	exit(0);
 }
 
