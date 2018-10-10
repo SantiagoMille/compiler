@@ -1,0 +1,67 @@
+// This is a text input file for the compiler
+int a;
+int b;
+double c;
+bool flag;
+
+int main () {
+	
+	int hello;
+	int num;
+	num = 5;
+	
+	/* Multiple comment 
+	   test 
+	*/
+
+	bool asdf;
+	hello = testFunction();
+	print (hello); 
+	int y; 
+	int x;
+	testFunction2(x,y,asdf);
+	return 0; 
+
+}
+
+int testFunction (int n){
+	
+	double t;
+	t = 5.6;
+	double r;
+	
+	while(t>=3){
+		
+	   t=t-1;
+			
+	}
+	
+	if(t==3){
+		int x;
+		x=3;	
+	}
+
+	r = 7.8 * t; 
+	int k;
+	k = 50 + n;
+	// More single line comments 
+	return k;
+
+}
+
+void testFunction2(int a, int b, bool flag){
+	
+	print(a);
+	print(b);
+	repeat{
+	  int z;
+	  z=8;
+	  if(a==z){
+	    y=5;
+	  }
+	}(x>y)
+	print(flag);
+	
+	return 0;
+
+}
