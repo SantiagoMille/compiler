@@ -11,7 +11,7 @@ int yylex();
   char t; 
 }
 
-%token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE INTCONST DOUBLECONST IDENT DOUBLE INT BOOLEAN BOOLEANCONST BR
+%token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE INTCONST DOUBLECONST IDENT DOUBLE INT BOOLEAN BOOLEANCONST 
 %type <typeexpr> expr
 %type <typeexpr> term
 %type <typeexpr> fact
@@ -27,30 +27,22 @@ int yylex();
 
 %%
 
-prog : decll {printf("\nprog");};
-
-/*decll : decll ',' varDec {printf("\ndecll1");}
-	| decll ',' funcDec {printf("\ndecll2");}
-        | decll BR varDec {printf("\ndecll1");}
-	| decll BR funcDec {printf("\ndecll2");}
-	| varDec | funcDec {printf("\ndecll3");}
-	;
-*/
+prog : decll ;
 
 decll   : decll varDec | varDec | decll funcDec | funcDec;
 
 
-varDec : var ';' {printf("\nvarDec1");};
+varDec : var ';' ;
 
-var    : tipo IDENT;
+var    : tipo IDENT ;
 
 tipo : DOUBLE 
      | INT 
      | BOOLEAN 
      ;
 
-funcDec : tipo IDENT '(' formals ')' '{'instrBlock'}' {printf("\nfuncDec1");}
-        | VOID IDENT '(' formals ')' '{'instrBlock'}' {printf("\nfuncDec2");};
+funcDec : tipo IDENT '(' formals ')' '{'instrBlock'}' 
+        | VOID IDENT '(' formals ')' '{'instrBlock'}' ;
 
 varDecL : var ',' var | var ;
 
@@ -156,7 +148,7 @@ int main(int argc, char **argv)
 
 int yyerror(char *s)
 {
-	fprintf(stderr,"error: %s %d\n", s, num_lines);
+	fprintf(stderr,"error: %s \n En la linea: %d\n", s, num_lines);
 	exit(0);
 }
 

@@ -1,0 +1,188 @@
+
+int var1;
+double var2;
+bool cond;
+
+int main(){
+	// here is the main code example
+	int hexa;
+	hexa = 0X45af;
+	int deci;
+	deci = 22;
+	double decimal;
+	decimal = 24.;
+	double decimal2;
+	decimal2 = 1.E+14;
+
+	/*testing functions*/
+	function1();
+	function2(50);
+	double recibe;
+	recibe = function3(1,2.0);
+	function4(1,true,5.0);
+
+
+	/*testinf the while function*/
+
+	int recibeWhile;
+	recieveWhile = whileTest(hexa);
+
+	/*test with if function*/
+	int one;
+	one = 1;
+	int two;
+	two = 2;
+	int result;
+	result = ifTest(a,b);
+
+	/*test with repeat function*/
+
+	int resultRepeat;
+	resultRepeat = repeatTest(a,b);
+
+}
+
+/* Example with function 1 */
+
+void function1(void){
+	bool output1;
+	output1 = true;
+	print(output1);
+}
+
+/* Example with function 2 */
+
+int function2(int one){
+	int str;
+	str = 2;
+	print(str);
+	print(one);
+	return str;
+}
+
+
+/* Example with function 3 */
+
+double function3(int one, double two){
+	int str;
+	str = 3;
+	print(one);
+	print(b);
+	return b;
+}
+
+/* Example with function 4 */
+
+bool function4(int one, bool boolCondition, double floatingNum){
+	int str2;
+	str2 = 45;
+	print(str2);
+	print(one, boolCondition, floatingNum);
+	return str2;
+}
+
+/* Example with while */
+
+int whileTest(int a){
+	bool string1;
+
+	string1 = true;
+
+	print(string1);
+	int b;
+	b = a;
+	while(b != 10){
+		b = b+1;
+	}
+	b=0;
+	while(b<=10){
+		b = b +2;
+	}
+
+	b= 0;
+
+	while(b == 5){
+		b = 5;
+	}
+
+	print(string1);
+	while(string1){
+		string1 = false;
+		print(string1);
+	}
+
+
+
+	print(b);
+
+	return b;
+}
+
+/* Example with if */
+
+int ifTest(int a, int b){
+	
+	int testIfNow;
+	testIfNow = a;
+	print(testIfNow);
+	while(testIfNow<=b){
+		print(testIfNow,b);
+		testIfNow = testIfNow;
+		if(testIfNow> a+5){
+			testIfNow = b*2;
+		}
+	}
+
+	if (testIfNow>=100){
+		testIfNow = 0;
+	}else{
+		tesIfNow = 100;
+	}
+
+	if(b <= testIfNow){
+		testIfNow = b+1;
+	}
+
+	if(testIfNow == 50){
+		print(testIfNow);
+	}
+
+	int nuevo;
+	nuevo = ifTest(testIfNow,b);
+	print(nuevo);
+	
+	return nuevo;
+
+}
+
+/* Example with repeat */
+
+int repeatTest(int a, int b){
+
+	int test1;
+	test1 = a*5;
+	int test2;
+	test2 = b /5;
+
+	repeat test1 = test+1; (test1<=100)
+
+	test1 = 0;
+
+	repeat {
+		test2 = test1 +1;
+		test1 = test2 +2;
+	} (test2 < 50)
+
+	test2 = 0;
+	repeat {
+		print(test2,test1);
+		test2 = test2 +5;
+		test1 = test1-test2;
+	} (test2<=100)
+	
+	return test2;
+
+}
+{
+	main();
+}

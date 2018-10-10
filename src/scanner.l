@@ -58,7 +58,7 @@ int num_lines = 1;
 "true"										{return(BOOLEANCONST);}
 "false"										{return(BOOLEANCONST);}
 [a-zA-Z][a-zA-Z0-9_]*						{return(IDENT);}
-\n											{++num_lines; return(BR);}
+\n											{++num_lines;}
 <<EOF>>										{return 0;}
 .       									{printf("\nERROR: Illegal token: %s ",yytext); printf("at line %d\n",num_lines);}	
 %%

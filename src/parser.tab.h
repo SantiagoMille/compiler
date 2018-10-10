@@ -86,13 +86,12 @@ extern int yydebug;
     INT = 296,
     BOOLEAN = 297,
     BOOLEANCONST = 298,
-    BR = 299,
-    AND = 300,
-    OR = 301,
-    LESSOREQUAL = 302,
-    GREATEROREQUAL = 303,
-    NOTEQUAL = 304,
-    EQUALEQUAL = 305
+    AND = 299,
+    OR = 300,
+    LESSOREQUAL = 301,
+    GREATEROREQUAL = 302,
+    NOTEQUAL = 303,
+    EQUALEQUAL = 304
   };
 #endif
 
@@ -106,7 +105,7 @@ union YYSTYPE
   struct typeexpr;
   char t; 
 
-#line 110 "parser.tab.h" /* yacc.c:1909  */
+#line 109 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

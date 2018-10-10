@@ -1149,7 +1149,7 @@ case 54:
 /* rule 54 can match eol */
 YY_RULE_SETUP
 #line 61 "scanner.l"
-{++num_lines; return(BR);}
+{++num_lines;}
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 #line 62 "scanner.l"
