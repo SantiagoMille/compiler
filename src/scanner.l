@@ -7,8 +7,8 @@ int num_lines = 1;
 %%
 " "											{}
 "\t"										{}
-\/\/[^\n]*\n        						{}
-\/\*[a-zA-Z0-9_\n' ']*[^*/]\*\/				{}
+"//".*       								        {printf("Comment corto\n");}
+\/\*[a-zA-Z0-9_\n' ']*[^*/]\*\/				                        {}
 "auto"										{return(AUTO);}
 "break"										{return(BREAK);}
 "case"										{return(CASE);}
@@ -54,11 +54,12 @@ int num_lines = 1;
 "&&"										{return(AND);}
 "||"										{return(OR);}
 [0-9]+ 										{return(INTCONST);}
-[0-9]+\.[0-9]+((E|e)[+-]?[0-9]+)?			{return(DOUBLECONST);}
+"0"[xX][a-fA-F0-9]+								{return(INTCONST);}
+[0-9]+\.[0-9]*((E|e)[+-]?[0-9]+)?			                        {return(DOUBLECONST);}
 "true"										{return(BOOLEANCONST);}
 "false"										{return(BOOLEANCONST);}
-[a-zA-Z][a-zA-Z0-9_]*						{return(IDENT);}
-\n											{++num_lines;}
+[a-zA-Z][a-zA-Z0-9_]*						                {return(IDENT);}
+\n										{++num_lines;}
 <<EOF>>										{return 0;}
 .       									{printf("\nERROR: Illegal token: %s ",yytext); printf("at line %d\n",num_lines);}	
 %%

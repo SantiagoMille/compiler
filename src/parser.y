@@ -29,7 +29,11 @@ int yylex();
 
 prog : decll ;
 
-decll   : decll varDec | varDec | decll funcDec | funcDec;
+decll   : decll varDec 
+	| varDec 
+	| decll funcDec 
+	| funcDec 
+	;
 
 
 varDec : var ';' ;
@@ -38,32 +42,43 @@ var    : tipo IDENT ;
 
 tipo : DOUBLE 
      | INT 
-     | BOOLEAN 
+     | BOOLEAN
      ;
 
 funcDec : tipo IDENT '(' formals ')' '{'instrBlock'}' 
         | VOID IDENT '(' formals ')' '{'instrBlock'}' ;
 
-varDecL : var ',' var | var ;
+varDecL : varDecL ',' var | var ;
 
 varDecLL : varDecL ';';
 
 formals : varDecL | VOID | ;
 
-instrBlock : instrBlock instr | instr;
+instrBlock : instrBlock instr 
+           | instr;
 
-instr   : varDecL | instrAssign | instrIf | instrWhile | instrRepeat | instrReturn | instrPrint | instrBlock;
+instr   : varDecL | instrAssign | instrIf | instrWhile | instrRepeat | instrReturn | instrPrint | instrBlock | exprL | expr | call | varDec;
 
-instrAssign : IDENT '=' expr ';';
+instrAssign : IDENT '=' expr ';'|IDENT '=' exprL ';' |IDENT '=' actual |IDENT '=' call ';' ;
+
 instrIf : IF'('expr')''{' instrBlock'}'|IF'('expr')''{' instrBlock'}'ELSE'{'instrBlock'}';
-instrWhile : WHILE '('expr')''{' instrBlock'}';
+
+instrWhile : WHILE '('expr')''{' instrBlock'}' {printf("while");};
 
 instrRepeat : REPEAT '{' instrBlock'}' '('expr')';
 
 instrReturn : RETURN expr ';';
-instrPrint : PRINT'(' varDecL ')'';';
 
-exprL : exprL ',' expr | expr | ;
+instrPrint : PRINT'(' varDecL ')'';'
+           | PRINT'('expr')'';'
+           | PRINT'('exprL')'';';
+
+call : IDENT'('actual')'';';
+
+actual : exprL| ;
+
+exprL : exprL ',' expr 
+      | expr ;
 
 expr : expr '+' expr
      | expr
@@ -82,7 +97,7 @@ expr : expr '+' expr
      | expr '<' expr  
      | '-' expr 
      | constant 
-     | call 
+     | call
      | IDENT 
      | '(' expr ')' 
      | expr '*' expr 
@@ -90,9 +105,7 @@ expr : expr '+' expr
      | expr '%' expr 
      ;
 
-call : IDENT'('actual')';
 
-actual : exprL| ;
 
 constant: INTCONST | DOUBLECONST | BOOLEANCONST;
 
