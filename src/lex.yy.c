@@ -1129,17 +1129,17 @@ YY_RULE_SETUP
 case 49:
 YY_RULE_SETUP
 #line 56 "scanner.l"
-{return(INTCONST);}
+{yylval.typeexpr.place = strdup(yytext); return(INTCONST);}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 57 "scanner.l"
-{return(INTCONST);}
+{yylval.typeexpr.place = strdup(yytext); return(INTCONST);}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 58 "scanner.l"
-{return(DOUBLECONST);}
+{yylval.typeexpr.place = strdup(yytext); return(DOUBLECONST);}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
@@ -1154,7 +1154,7 @@ YY_RULE_SETUP
 case 54:
 YY_RULE_SETUP
 #line 61 "scanner.l"
-{return(IDENT);}
+{yylval.typeexpr.place = strdup(yytext); return(IDENT);}
 	YY_BREAK
 case 55:
 /* rule 55 can match eol */

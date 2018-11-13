@@ -79,19 +79,19 @@ extern int yydebug;
     PRINT = 289,
     READINT = 290,
     READDOUBLE = 291,
-    INTCONST = 292,
-    DOUBLECONST = 293,
-    IDENT = 294,
-    DOUBLE = 295,
-    INT = 296,
-    BOOLEAN = 297,
+    DOUBLE = 292,
+    INT = 293,
+    BOOLEAN = 294,
+    IDENT = 295,
+    INTCONST = 296,
+    DOUBLECONST = 297,
     BOOLEANCONST = 298,
-    AND = 299,
-    OR = 300,
-    LESSOREQUAL = 301,
-    GREATEROREQUAL = 302,
-    NOTEQUAL = 303,
-    EQUALEQUAL = 304
+    OR = 299,
+    AND = 300,
+    NOTEQUAL = 301,
+    EQUALEQUAL = 302,
+    LESSOREQUAL = 303,
+    GREATEROREQUAL = 304
   };
 #endif
 
@@ -100,9 +100,9 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 9 "parser.y" /* yacc.c:1909  */
+#line 13 "parser.y" /* yacc.c:1909  */
 
-  struct typeexpr;
+  struct example typeexpr;
   char t; 
 
 #line 109 "parser.tab.h" /* yacc.c:1909  */

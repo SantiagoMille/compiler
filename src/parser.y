@@ -2,26 +2,35 @@
 #include "parser.h"
 #include <stdio.h>
 extern int num_lines;
+int ntemp = 0;
+int mquad = 0;
 int yyerror(char *);
 int yylex();
+char * newtemp (void);
+void emit(char *op, char *arg1, char *arg2, char *res);
 %}
 
 %union{
-  struct typeexpr;
+  struct example typeexpr;
   char t; 
 }
 
-%token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE INTCONST DOUBLECONST IDENT DOUBLE INT BOOLEAN BOOLEANCONST 
-%type <typeexpr> expr
-%type <typeexpr> decll
+%token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE 
+%token <t> DOUBLE INT BOOLEAN
+%token <typeexpr> IDENT INTCONST DOUBLECONST BOOLEANCONST 
+%type <typeexpr> expr constant instrAssign call
+%type <typeexpr> decll 
 %type <t> tipo
 
 //operator precedence
-%left AND OR
-%right '!'
-%left '>' '<' LESSOREQUAL GREATEROREQUAL NOTEQUAL EQUALEQUAL
+%left '='
+%left OR
+%left AND
+%left NOTEQUAL EQUALEQUAL
+%left '>' '<' LESSOREQUAL GREATEROREQUAL 
 %left '+' '-'
-%left '*' '/'
+%left '*' '/' '%'
+%left '!'
 
 %%
 
@@ -36,15 +45,50 @@ decll   : decll varDec
 
 varDec : var ';' ;
 
-var    : tipo IDENT ;
+var    : tipo IDENT { if(!find($2.place))
+                              {
+                                place = lookup($2.place); 
+                                place -> type = $1;
+                              }
+                              else
+                              {
+                                printf("Duplicated declaration: %s\n", $2.place);
+                                yyerror("Duplicated declaration");
+                                exit(0);
+                              } 
+                            }
+        ;
 
-tipo : DOUBLE
-     | INT 
-     | BOOLEAN
+tipo : DOUBLE {$$ = 'D';}
+     | INT {$$ = 'I';} 
+     | BOOLEAN {$$ = 'B';}
      ;
 
-funcDec : tipo IDENT '(' formals ')' '{'instrBlock'}' 
-        | VOID IDENT '(' formals ')' '{'instrBlock'}' ;
+funcDec : tipo IDENT '(' formals ')' '{'instrBlock'}' { if(!find($2.place))
+                              {
+                                place = lookup($2.place); 
+                                place -> type = $1;
+                              }
+                              else
+                              {
+                                printf("Duplicated declaration: %s\n", $2.place);
+                                yyerror("Duplicated declaration");
+                                exit(0);
+                              } 
+                            }
+        | VOID IDENT '(' formals ')' '{'instrBlock'}' { if(!find($2.place))
+                              {
+                                place = lookup($2.place); 
+                                place -> type = VOID;
+                              }
+                              else
+                              {
+                                printf("Duplicated declaration: %s\n", $2.place);
+                                yyerror("Duplicated declaration");
+                                exit(0);
+                              } 
+                            }
+        ; 
 
 varDecL : varDecL ',' var | var ;
 
@@ -57,7 +101,11 @@ instrBlock : instrBlock instr
 
 instr   : varDecL | instrAssign | instrIf | instrWhile | instrRepeat | instrReturn | instrPrint | instrBlock | exprL | expr | call | varDec;
 
-instrAssign : IDENT '=' expr ';'|IDENT '=' exprL ';' |IDENT '=' actual |IDENT '=' call ';' ;
+instrAssign : IDENT '=' expr ';'  {emit("=", $3.place, "" , $1.place);}
+            |IDENT '=' exprL ';'  
+            |IDENT '=' actual ';' 
+            |IDENT '=' call ';'   {emit("=", $3.place, "" , $1.place);}
+            ;
 
 instrIf : IF '(' exprL ')' '{' instrBlock '}'  
         |IF'('exprL ')' '{' instrBlock '}' ELSE '{' instrBlock '}';
@@ -80,33 +128,125 @@ actual : exprL| ;
 exprL : exprL ',' expr 
       | expr ;
 
-expr : expr '+' expr
-     | IDENT
-     | expr '-' expr
-     | READINT'('')'
-     | READDOUBLE'('')' 
-     | '!'expr 
-     | expr OR expr 
-     | expr AND expr  
-     | expr NOTEQUAL expr  
-     | expr EQUALEQUAL expr
-     | expr GREATEROREQUAL expr 
-     | expr '>' expr 
-     | expr LESSOREQUAL expr  
-     | expr '<' expr  
+expr : expr '+' expr  { if($1.type == $3.type) $$.type = $1.type;
+                        else                   yyerror("Incompatible types");
+                        $$.place = strdup(newtemp()); 
+                        emit("+", $1.place, $3.place, $$.place);}
+
+     | IDENT          {if(find($1.place)) {
+                                place=lookup($1.place); 
+                                $$.type=place->type;
+                                $$.place=$1.place;
+                             }
+                             else {
+                                printf("Identifier not found: %s\n", $1.place); 
+                                yyerror("Variable was never declared");
+                                exit(0);
+                             }
+                            }
+
+     | expr '-' expr  { if($1.type == $3.type) $$.type = $1.type;
+                        else                   yyerror("Incompatible types");
+                        $$.place = strdup(newtemp()); 
+                        emit("-", $1.place, $3.place, $$.place);}
+
+     | READINT'('expr')'   {      $$.type = 'I';
+                              $$.place = strdup(newtemp()); 
+                              }
+     | READDOUBLE'('expr')' {      $$.type = 'D';
+                              $$.place = strdup(newtemp()); 
+                              }
+
+     | '!'expr         {$$.type = $2.type;
+                              $$.place = strdup(newtemp()); 
+                              emit("not", $2.place, "", $$.place);}
+
+     | expr OR expr     { if($1.type == $3.type) $$.type = $1.type;
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit("or", $1.place, $3.place, $$.place);}
+
+     | expr AND expr    { if($1.type == $3.type) $$.type = $1.type;
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit("and", $1.place, $3.place, $$.place);}
+
+     | expr NOTEQUAL expr  { if($1.type == $3.type) $$.type = 'B';
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit("!=", $1.place, $3.place, $$.place);}
+
+
+     | expr EQUALEQUAL expr { if($1.type == $3.type) $$.type = 'B';
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit("==", $1.place, $3.place, $$.place);}
+
+     | expr GREATEROREQUAL expr { if($1.type == $3.type) $$.type = 'B';
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit(">=", $1.place, $3.place, $$.place);}
+
+     | expr '>' expr  { if($1.type == $3.type) $$.type = 'B';
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit(">", $1.place, $3.place, $$.place);}
+     
+     | expr LESSOREQUAL expr  { if($1.type == $3.type) $$.type = 'B';
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit("<=", $1.place, $3.place, $$.place);}
+     
+     | expr '<' expr  { if($1.type == $3.type) $$.type = 'B';
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit("<", $1.place, $3.place, $$.place);}
+     
      | '-' expr 
-     | constant 
+     
+     | constant { $$.type = $1.type;
+                  $$.place = strdup(newtemp()); }
+     
      | call
-     | IDENT 
-     | '(' expr ')' 
-     | expr '*' expr 
-     | expr '/' expr 
-     | expr '%' expr 
+     
+     | IDENT {if(find($1.place)) {
+                                place=lookup($1.place); 
+                                $$.type=place->type;
+                                $$.place=$1.place;
+                             }
+                             else {
+                                printf("Identifier not found: %s\n", $1.place); 
+                                yyerror("Variable was never declared");
+                                exit(0);
+                             }
+                            }
+     
+     | '(' expr ')' { $$.type = $2.type;
+                              $$.place = $2.place;}
+     
+     | expr '*' expr  { if($1.type == $3.type) $$.type = $1.type;
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit("*", $1.place, $3.place, $$.place);}
+     
+     | expr '/' expr  { if($1.type == $3.type) $$.type = $1.type;
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit("/", $1.place, $3.place, $$.place);}
+     
+     | expr '%' expr  { if($1.type == $3.type) $$.type = $1.type;
+                              else                   yyerror("Incompatible types");
+                              $$.place = strdup(newtemp()); 
+                              emit("%", $1.place, $3.place, $$.place);}
+     
      ;
 
 
 
-constant: INTCONST | DOUBLECONST | BOOLEANCONST;
+constant : INTCONST {$$.type = 'I'; $$.place=$1.place;} 
+         | DOUBLECONST  {$$.type = 'D'; $$.place=$1.place;}
+         | BOOLEANCONST {$$.type = 'B'; $$.place=$1.place;}
+         ;
 
 %%
 
@@ -128,13 +268,13 @@ struct symbol *
 lookup(char* sym)
 {
   struct symbol *sp = &symtab[symhash(sym)%NHASH];
-  int scount = NHASH;		/* how many have we looked at */
+  int scount = NHASH;   /* how many have we looked at */
 
   while(--scount >= 0) {
     nprobe++;
     if(sp->name && !strcmp(sp->name, sym)) { nold++; return sp; }
 
-    if(!sp->name) {		/* new entry */
+    if(!sp->name) {   /* new entry */
       nnew++;
       sp->name = strdup(sym);
       return sp;
@@ -142,9 +282,34 @@ lookup(char* sym)
 
     if(++sp >= symtab+NHASH) sp = symtab; /* try the next entry */
   }
-  fputs("symbol table overflow\n", stderr);
+  fputs("Symbol table overflow\n", stderr);
   abort(); /* tried them all, table is full */
 
+}
+
+char find (char* sym)
+{
+  struct symbol *sp = &symtab[symhash(sym)%NHASH];
+  int scount = NHASH;   /* how many have we looked at */
+
+  while(--scount >= 0)
+    if(sp->name && !strcmp(sp->name, sym)) return 1;
+  return 0;
+
+}
+
+char * newtemp (void){
+  char temp[10];
+  sprintf(temp,"t%d",ntemp++);
+  return strdup(temp);
+}
+
+void emit(char *op, char *arg1, char *arg2, char *res){
+  quadtab[mquad].op=strdup(op);
+  quadtab[mquad].arg1=strdup(arg1);
+  quadtab[mquad].arg2=strdup(arg2);
+  quadtab[mquad].res=strdup(res);
+  mquad++;
 }
 
 int main(int argc, char **argv)
@@ -155,12 +320,16 @@ int main(int argc, char **argv)
     exit( 1 );
   }
 	yyparse();
-	printf("Expresion aceptada \n");
+	printf("Accepted expression. \n");
+
+  printf("Intermediate code: \n");
+  for(int i=0;i<mquad;i++){
+    printf("%s %s %s %s \n",quadtab[i].op, quadtab[i].arg1,quadtab[i].arg2, quadtab[i].res);
+  }
 }
 
-int yyerror(char *s)
-{
-	fprintf(stderr,"error: %s \n En la linea: %d\n", s, num_lines);
-	exit(0);
+int yyerror(char *s){
+  fprintf(stderr,"Error: %s at line %d\n", s, num_lines);
+  exit(0);
 }
 

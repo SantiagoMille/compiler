@@ -16,7 +16,7 @@ int main () {
 
 	bool asdf;
 	hello = testFunction();
-	print (hello); 
+	//print (hello); 
 	int y; 
 	int x;
 	testFunction2(x,y,asdf);
