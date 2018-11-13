@@ -30,16 +30,16 @@ void emit(char *op, char *arg1, char *arg2, char *res);
 %left '>' '<' LESSOREQUAL GREATEROREQUAL 
 %left '+' '-'
 %left '*' '/' '%'
-%left '!'
+%left '!' UMINUS
 
 %%
 
 prog : decll ;
 
 decll   : decll varDec 
-	| varDec 
+	| varDec {}
 	| decll funcDec 
-	| funcDec 
+	| funcDec {}
 	;
 
 
@@ -202,7 +202,7 @@ expr : expr '+' expr  { if($1.type == $3.type) $$.type = $1.type;
                               $$.place = strdup(newtemp()); 
                               emit("<", $1.place, $3.place, $$.place);}
      
-     | '-' expr 
+     | '-' expr %prec UMINUS {}
      
      | constant { $$.type = $1.type;
                   $$.place = strdup(newtemp()); }
@@ -219,7 +219,7 @@ expr : expr '+' expr  { if($1.type == $3.type) $$.type = $1.type;
                                 yyerror("Variable was never declared");
                                 exit(0);
                              }
-                            }
+              }
      
      | '(' expr ')' { $$.type = $2.type;
                               $$.place = $2.place;}
