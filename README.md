@@ -22,3 +22,13 @@ NOTE: It is necessary that the 'make.c' file and the executable 'make' are in th
 2.1. file.txt is the input file (change file.txt to the name and extension of the desired input file)
 
 ------------------------------------------------------------------------------------------------
+
+Sample runs:
+
+Evidence1.png: Sample run using test1.txt as input, this file is correct and the scanner and parser doesn't send any errors. 
+
+Evidence2.png: Sample run using test2.txt as input, this file is correct and the scanner and parser doesn't send any errors.
+
+Evidence3.png: Sample run using test2.txt as input, this file is incorrect in line 65 where the else should have {brackets}. The parser recognizes this error and displays the line where it found it. 
+
+Evidence4.png: Sample run using test2.txt as input, this file is incorrect in line 18 where there is only a type declaration but without the identification nor the semicolon. The parser recognizes this error and displays the line where it found it.
