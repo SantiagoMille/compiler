@@ -10,12 +10,12 @@ int yyerror(char *);
 int yylex();
 char * newtemp (void);
 void emit(char *op, char *arg1, char *arg2, char *res);
+struct Stack* stack;
 %}
 
 %union{
   struct example typeexpr;
   char t; 
-  struct Stack stack;
 }
 
 %token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE 
@@ -33,16 +33,16 @@ void emit(char *op, char *arg1, char *arg2, char *res);
 %left '>' '<' LESSOREQUAL GREATEROREQUAL 
 %left '+' '-'
 %left '*' '/' '%'
-%left '!'
+%left '!' UMINUS
 
 %%
 
 prog : decll ;
 
 decll   : decll varDec 
-	| varDec 
+	| varDec {}
 	| decll funcDec 
-	| funcDec 
+	| funcDec {}
 	;
 
 
@@ -87,7 +87,7 @@ funcDec : tipo IDENT '(' formals ')' openScope instrBlock closeScope { if(!find(
                                 exit(0);
                               } 
                             }
-        | VOID IDENT '(' formals ')' openScopeinstrBlock  closeScope  { if(!find($2.place))
+        | VOID IDENT '(' formals ')' openScope instrBlock  closeScope  { if(!find($2.place))
                               {
                                 place = lookup($2.place); 
                                 place -> type = VOID;
@@ -213,7 +213,7 @@ expr : expr '+' expr  { if($1.type == $3.type) $$.type = $1.type;
                               $$.place = strdup(newtemp()); 
                               emit("<", $1.place, $3.place, $$.place);}
      
-     | '-' expr 
+     | '-' expr %prec UMINUS {}
      
      | constant { $$.type = $1.type;
                   $$.place = strdup(newtemp()); }
@@ -230,7 +230,7 @@ expr : expr '+' expr  { if($1.type == $3.type) $$.type = $1.type;
                                 yyerror("Variable was never declared");
                                 exit(0);
                              }
-                            }
+              }
      
      | '(' expr ')' { $$.type = $2.type;
                               $$.place = $2.place;}
@@ -278,6 +278,7 @@ int nprobe;
 struct symbol * lookupstack(char* sym){
   int toptop = stack->top;
   while(toptop>=0){
+
     struct symbol *sp = &stack->array[toptop][symhash(sym)%NHASH];
     int scount = NHASH;   /* how many have we looked at */
 
@@ -353,7 +354,7 @@ struct Stack* createStack(unsigned capacity) {
     struct Stack* stack = (struct Stack*) malloc(sizeof(struct Stack)); 
     stack->capacity = capacity; 
     stack->top = -1; 
-    stack->array = (struct symbol*) malloc(stack->capacity * sizeof(struct symbol)); 
+    stack->array =  (struct symbol *)  malloc(stack->capacity * 100 * sizeof(struct symbol)); 
     return stack; 
 } 
 
@@ -374,11 +375,12 @@ void push(struct Stack* stack, struct symbol* item)
 } 
   
 // Function to remove an item from stack.  It decreases top by 1 
-struct symbol pop(struct Stack* stack) 
+void pop(struct Stack* stack) 
 { 
     if (isEmpty(stack)) 
         return; 
-    return stack->array[stack->top--]; 
+    stack->top--;
+    return;
 }
 
 int main(int argc, char **argv)
@@ -388,7 +390,7 @@ int main(int argc, char **argv)
     printf("Cannot open file %s", argv[1]);
     exit( 1 );
   }
-  struct Stack* stack = createStack(100);
+  stack = createStack(100);
 	yyparse();
 	printf("Accepted expression. \n");
 

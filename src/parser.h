@@ -15,7 +15,7 @@ struct Stack
 { 
     int top; 
     unsigned capacity; 
-    struct symbol* array; 
+    struct symbol* array[100]; 
 };
 
 struct example typeexpr;
@@ -46,5 +46,9 @@ struct quadruple {
 struct symbol *place;
 
 int yyerror(char *);
+
+void pop(struct Stack*);
+
+void push(struct Stack* , struct symbol* );
 
 int yylex();
