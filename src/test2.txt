@@ -14,9 +14,9 @@ int main () {
 
 	bool asdf;
 	hello = testFunction();
-	print (hello); 
-	int y;
-	int x
+	print (hello); cd 
+	int y; 
+	int x;
 	testFunction2(x,y,asdf);
 	bool bandera;
 	bandera = true;

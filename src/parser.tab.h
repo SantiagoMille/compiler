@@ -100,12 +100,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 13 "parser.y" /* yacc.c:1909  */
+#line 15 "parser.y" /* yacc.c:1909  */
 
   struct example typeexpr;
   char t; 
+  struct Stack stack;
 
-#line 109 "parser.tab.h" /* yacc.c:1909  */
+#line 110 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

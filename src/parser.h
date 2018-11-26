@@ -11,6 +11,13 @@ struct  example  {
 	char type;
 };
 
+struct Stack 
+{ 
+    int top; 
+    unsigned capacity; 
+    struct symbol* array; 
+};
+
 struct example typeexpr;
 
 struct symbol {
