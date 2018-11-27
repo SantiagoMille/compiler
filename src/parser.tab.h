@@ -91,7 +91,8 @@ extern int yydebug;
     NOTEQUAL = 301,
     EQUALEQUAL = 302,
     LESSOREQUAL = 303,
-    GREATEROREQUAL = 304
+    GREATEROREQUAL = 304,
+    UMINUS = 305
   };
 #endif
 
@@ -100,11 +101,10 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 15 "parser.y" /* yacc.c:1909  */
+#line 13 "parser.y" /* yacc.c:1909  */
 
   struct example typeexpr;
   char t; 
-  struct Stack stack;
 
 #line 110 "parser.tab.h" /* yacc.c:1909  */
 };

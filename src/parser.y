@@ -1,8 +1,6 @@
 %{
 #include "parser.h"
 #include <stdio.h>
-#include <stdlib.h> 
-#include <limits.h>
 extern int num_lines;
 int ntemp = 0;
 int mquad = 0;
@@ -15,7 +13,6 @@ void emit(char *op, char *arg1, char *arg2, char *res);
 %union{
   struct example typeexpr;
   char t; 
-  struct Stack stack;
 }
 
 %token AUTO BREAK  CASE CHAR CONTINUE DO DEFAULT CONST ELSE ENUM EXTERN FOR IF GOTO FLOAT LONG REGISTER RETURN SIGNED STATIC SIZEOF SHORT STRUCT SWITCH TYPEDEF UNION VOID WHILE VOLATILE UNSIGNED REPEAT PRINT READINT READDOUBLE 
@@ -33,17 +30,17 @@ void emit(char *op, char *arg1, char *arg2, char *res);
 %left '>' '<' LESSOREQUAL GREATEROREQUAL 
 %left '+' '-'
 %left '*' '/' '%'
-%left '!'
+%left '!' UMINUS
 
 %%
 
 prog : decll ;
 
 decll   : decll varDec 
-	| varDec 
-	| decll funcDec 
-	| funcDec 
-	;
+  | varDec {}
+  | decll funcDec 
+  | funcDec {}
+  ;
 
 
 varDec : var ';' ;
@@ -67,15 +64,7 @@ tipo : DOUBLE {$$ = 'D';}
      | BOOLEAN {$$ = 'B';}
      ;
 
-openScope : '{' {struct symbol symtab[NHASH];
-		 push(stack, symtab);
-		};
-
-closeScope : '}' {
-		  pop(stack);
-		 };
-
-funcDec : tipo IDENT '(' formals ')' openScope instrBlock closeScope { if(!find($2.place))
+funcDec : tipo IDENT '(' formals ')' '{'instrBlock'}' { if(!find($2.place))
                               {
                                 place = lookup($2.place); 
                                 place -> type = $1;
@@ -87,7 +76,7 @@ funcDec : tipo IDENT '(' formals ')' openScope instrBlock closeScope { if(!find(
                                 exit(0);
                               } 
                             }
-        | VOID IDENT '(' formals ')' openScopeinstrBlock  closeScope  { if(!find($2.place))
+        | VOID IDENT '(' formals ')' '{'instrBlock'}' { if(!find($2.place))
                               {
                                 place = lookup($2.place); 
                                 place -> type = VOID;
@@ -118,13 +107,13 @@ instrAssign : IDENT '=' expr ';'  {emit("=", $3.place, "" , $1.place);}
             |IDENT '=' call ';'   {emit("=", $3.place, "" , $1.place);}
             ;
 
-instrIf : IF '(' exprL ')' openScope instrBlock  closeScope  {}
-        |IF'('exprL ')' openScope instrBlock  closeScope  ELSE openScope instrBlock  closeScope ;
+instrIf : IF '(' exprL ')' '{' instrBlock '}'  
+        |IF'('exprL ')' '{' instrBlock '}' ELSE '{' instrBlock '}';
 
-instrWhile : WHILE '(' exprL ')' openScope instrBlock closeScope  
-	   | ;
+instrWhile : WHILE '(' exprL ')' '{' instrBlock'}' 
+     | ;
 
-instrRepeat : REPEAT openScope instrBlock closeScope  '('expr')';
+instrRepeat : REPEAT '{' instrBlock'}' '('expr')';
 
 instrReturn : RETURN expr ';';
 
@@ -213,7 +202,7 @@ expr : expr '+' expr  { if($1.type == $3.type) $$.type = $1.type;
                               $$.place = strdup(newtemp()); 
                               emit("<", $1.place, $3.place, $$.place);}
      
-     | '-' expr 
+     | '-' expr %prec UMINUS {}
      
      | constant { $$.type = $1.type;
                   $$.place = strdup(newtemp()); }
@@ -230,7 +219,7 @@ expr : expr '+' expr  { if($1.type == $3.type) $$.type = $1.type;
                                 yyerror("Variable was never declared");
                                 exit(0);
                              }
-                            }
+              }
      
      | '(' expr ')' { $$.type = $2.type;
                               $$.place = $2.place;}
@@ -261,7 +250,9 @@ constant : INTCONST {$$.type = 'I'; $$.place=$1.place;}
 
 %%
 
-static unsigned symhash(char *sym){
+static unsigned
+symhash(char *sym)
+{
   unsigned int hash = 0;
   unsigned c;
 
@@ -273,34 +264,10 @@ static unsigned symhash(char *sym){
 int nnew, nold;
 int nprobe;
 
-
-
-struct symbol * lookupstack(char* sym){
-  int toptop = stack->top;
-  while(toptop>=0){
-    struct symbol *sp = &stack->array[toptop][symhash(sym)%NHASH];
-    int scount = NHASH;   /* how many have we looked at */
-
-    while(--scount >= 0) {
-      nprobe++;
-      if(sp->name && !strcmp(sp->name, sym)) { nold++; return sp; }
-
-      if(!sp->name) {   /* new entry */
-        nnew++;
-        sp->name = strdup(sym);
-        return sp;
-      }
-
-      if(++sp >= symtab+NHASH) sp = symtab; /* try the next entry */
-    }
-    toptop--;
-  }
-  fputs("Symbol table overflow\n", stderr);
-  abort(); /* tried them all, table is full */
-}
-
-struct symbol * lookup(char* sym){
-  struct symbol *sp = &stack->array[stack->top][symhash(sym)%NHASH];
+struct symbol *
+lookup(char* sym)
+{
+  struct symbol *sp = &symtab[symhash(sym)%NHASH];
   int scount = NHASH;   /* how many have we looked at */
 
   while(--scount >= 0) {
@@ -320,19 +287,15 @@ struct symbol * lookup(char* sym){
 
 }
 
-char find (char* sym){
-  int toptop = stack->top;
-  while(toptop>=0){
-    struct symbol *sp = &stack->array[toptop][symhash(sym)%NHASH];
-    int scount = NHASH;   /* how many have we looked at */
+char find (char* sym)
+{
+  struct symbol *sp = &symtab[symhash(sym)%NHASH];
+  int scount = NHASH;   /* how many have we looked at */
 
-    while(--scount >= 0){
-      if(sp->name && !strcmp(sp->name, sym)) return 1;
-    }
-    
-    toptop--;
-  }
+  while(--scount >= 0)
+    if(sp->name && !strcmp(sp->name, sym)) return 1;
   return 0;
+
 }
 
 char * newtemp (void){
@@ -349,38 +312,6 @@ void emit(char *op, char *arg1, char *arg2, char *res){
   mquad++;
 }
 
-struct Stack* createStack(unsigned capacity) { 
-    struct Stack* stack = (struct Stack*) malloc(sizeof(struct Stack)); 
-    stack->capacity = capacity; 
-    stack->top = -1; 
-    stack->array = (struct symbol*) malloc(stack->capacity * sizeof(struct symbol)); 
-    return stack; 
-} 
-
-int isFull(struct Stack* stack) 
-{   return stack->top == stack->capacity - 1; } 
-  
-// Stack is empty when top is equal to -1 
-int isEmpty(struct Stack* stack) 
-{   return stack->top == -1;  } 
-  
-// Function to add an item to stack.  It increases top by 1 
-void push(struct Stack* stack, struct symbol* item) 
-{ 
-    if (isFull(stack)) 
-        return; 
-    stack->array[++stack->top] = item; 
-    //printf("%d pushed to stack\n", item); 
-} 
-  
-// Function to remove an item from stack.  It decreases top by 1 
-struct symbol pop(struct Stack* stack) 
-{ 
-    if (isEmpty(stack)) 
-        return; 
-    return stack->array[stack->top--]; 
-}
-
 int main(int argc, char **argv)
 {
   if ((argc > 1) && (freopen(argv[1], "r", stdin) == NULL))
@@ -388,9 +319,8 @@ int main(int argc, char **argv)
     printf("Cannot open file %s", argv[1]);
     exit( 1 );
   }
-  struct Stack* stack = createStack(100);
-	yyparse();
-	printf("Accepted expression. \n");
+  yyparse();
+  printf("Accepted expression. \n");
 
   printf("Intermediate code: \n");
   for(int i=0;i<mquad;i++){
@@ -402,4 +332,3 @@ int yyerror(char *s){
   fprintf(stderr,"Error: %s at line %d\n", s, num_lines);
   exit(0);
 }
-

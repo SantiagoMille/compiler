@@ -6,31 +6,24 @@
 struct  example  {
     char * place;
     char *name;
-	double dval;
-	int    ival;
-	char type;
-};
-
-struct Stack 
-{ 
-    int top; 
-    unsigned capacity; 
-    struct symbol* array; 
+  double dval;
+  int    ival;
+  char type;
 };
 
 struct example typeexpr;
 
 struct symbol {
-    char type;	
+    char type;  
     char *name;
 };
 
 
 struct quadruple {
-	char *op;
-	char *arg1;
-	char *arg2;
-	char *res;
+  char *op;
+  char *arg1;
+  char *arg2;
+  char *res;
 };
 
 #define NQUAD 1000
